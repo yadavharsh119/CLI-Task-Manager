@@ -93,4 +93,4 @@ def update_task(task: TaskCreate, task_id: int):
     conn.commit()
     cur.close()
     conn.close()
-    return Task(id=updated_id, title=task.title, status=task.stgatus)
+    return Task(id=updated_id, title=task.title, status=task.atus)
