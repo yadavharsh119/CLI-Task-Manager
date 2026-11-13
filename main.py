@@ -2,6 +2,7 @@ import psycopg
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from schemas import Task, TaskCreate, UserCreate
 from auth import (
     hash_password,
     verify_password,
@@ -10,24 +11,7 @@ from auth import (
 )
 import db
 
-
-class TaskCreate(BaseModel):
-    title: str
-    status: bool = False
-
-
 app = FastAPI()
-
-
-class Task(BaseModel):
-    id: int
-    title: str
-    status: bool
-
-
-class UserCreate(BaseModel):
-    username: str
-    password: str
 
 
 @app.get("/")
@@ -50,15 +34,15 @@ def create_task(task: TaskCreate, user_id: int = Depends(get_current_user_id)):
 
 
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, user_id = Depends(get_current_user_id)):
-    row_count = db.delete_task(task_id,user_id)
+def delete_task(task_id: int, user_id=Depends(get_current_user_id)):
+    row_count = db.delete_task(task_id, user_id)
     if row_count == 0:
         raise HTTPException(status_code=404, detail="Enter a valid row id.")
     return {"message": "task was deleted"}
 
 
 @app.put("/tasks/{task_id}", response_model=Task)
-def update_task(task: TaskCreate, task_id: int, userid = Depends(get_current_user_id)):
+def update_task(task: TaskCreate, task_id: int, userid=Depends(get_current_user_id)):
     row = db.update_task(task.title, task.status, task_id, userid)
     if row is None:
         raise HTTPException(status_code=404, detail="Task not found.")
