@@ -1,10 +1,6 @@
 import psycopg
 import os
-
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:3001@localhost:5432/tasksdb",
-)
+from config import DATABASE_URL
 
 
 def get_connection():
